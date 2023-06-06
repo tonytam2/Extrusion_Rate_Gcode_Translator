@@ -2,7 +2,7 @@ import math
 import re
 
 def headerFindDigit(line):
-    matchArray = re.search('\d+\.?\d+', line)
+    matchArray = re.search('\d+\.?\d*', line)
     if(matchArray is None): #returns the keyword None if no digits are found
         print('No digits were found in: ' + line)
         return matchArray;
@@ -17,25 +17,17 @@ def main():
     if coordinate_type == 0: print('You are currently in G90 ABSOLUTE mode.')
     if coordinate_type == 1: print('You are currently in G91 RELATIVE mode.')
 
-    # try:
-    Z_syringe_line = headerFindDigit(content[1]) 
-    A_syringe_line = headerFindDigit(content[2])
-    Z_nozzle_line = headerFindDigit(content[3])
-    A_nozzle_line = headerFindDigit(content[4])
+    Z_syringe_line             = headerFindDigit(content[1]) 
+    A_syringe_line             = headerFindDigit(content[2])
+    Z_nozzle_line              = headerFindDigit(content[3])
+    A_nozzle_line              = headerFindDigit(content[4])
     extrusion_coefficient_line = headerFindDigit(content[5])
 
-    Z_syringe_diameter = float(Z_syringe_line.group(0)) if Z_syringe_line is not None else 0
-    A_syringe_diameter = float(A_syringe_line.group(0)) if A_syringe_line is not None else 0
-    Z_nozzle_diameter = float(Z_nozzle_line.group(0)) if Z_nozzle_line is not None else 0
-    A_nozzle_diameter = float(A_nozzle_line.group(0)) if A_nozzle_line is not None else 0
+    Z_syringe_diameter    = float(Z_syringe_line.group(0)) if Z_syringe_line is not None else 0
+    A_syringe_diameter    = float(A_syringe_line.group(0)) if A_syringe_line is not None else 0
+    Z_nozzle_diameter     = float(Z_nozzle_line.group(0)) if Z_nozzle_line is not None else 0
+    A_nozzle_diameter     = float(A_nozzle_line.group(0)) if A_nozzle_line is not None else 0
     extrusion_coefficient = float(extrusion_coefficient_line.group(0)) if extrusion_coefficient_line is not None else 0
-
-    print(Z_nozzle_diameter, A_syringe_diameter, Z_nozzle_diameter, A_nozzle_diameter, extrusion_coefficient)
-        
-    #  except:
-    #     print("")
-    # else:
-    #     placeholder = None
 
     gcode = content[6:]
     extruder = 0
@@ -215,7 +207,10 @@ filepath = "gcode_modified.txt"
 if platform.system() == 'Darwin':       # macOS
     subprocess.call(('open', filepath))
 elif platform.system() == 'Windows':    # Windows
-    os.startfile(filepath)
+    try:
+        os.startfile(filepath)
+    except FileNotFoundError:
+        print(filepath + " was not found.")
 else:                                   # linux variants
     subprocess.call(('xdg-open', filepath))
 
