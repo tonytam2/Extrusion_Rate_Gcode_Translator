@@ -1,4 +1,13 @@
 import math
+import re
+
+def headerFindDigit(line):
+    matchArray = re.search('\d+\.?\d+', line)
+    if(matchArray is None): #returns the keyword None if no digits are found
+        print('No digits were found in: ' + line)
+        return matchArray;
+    print(line)
+    return matchArray
 
 def main():
     #open the existing g-code file
@@ -7,21 +16,33 @@ def main():
     coordinate_type = 0 if 'G90' in content[0] else 1
     if coordinate_type == 0: print('You are currently in G90 ABSOLUTE mode.')
     if coordinate_type == 1: print('You are currently in G91 RELATIVE mode.')
-    Z_syringe_diameter = float(content[1][20:30])
-    A_syringe_diameter = float(content[2][20:30])
-    Z_nozzle_diameter = float(content[3][20:30])
-    A_nozzle_diameter = float(content[4][20:30])
-    extrusion_coefficient = float(content[5][23:30])
-    print("Z-Syringe: "+str(Z_syringe_diameter))
-    print("A-Syringe: "+str(A_syringe_diameter))
-    print("Z-Syringe: "+str(Z_nozzle_diameter))
-    print("A-Syringe: "+str(A_nozzle_diameter))
+
+    # try:
+    Z_syringe_line = headerFindDigit(content[1]) 
+    A_syringe_line = headerFindDigit(content[2])
+    Z_nozzle_line = headerFindDigit(content[3])
+    A_nozzle_line = headerFindDigit(content[4])
+    extrusion_coefficient_line = headerFindDigit(content[5])
+
+    Z_syringe_diameter = float(Z_syringe_line.group(0)) if Z_syringe_line is not None else 0
+    A_syringe_diameter = float(A_syringe_line.group(0)) if A_syringe_line is not None else 0
+    Z_nozzle_diameter = float(Z_nozzle_line.group(0)) if Z_nozzle_line is not None else 0
+    A_nozzle_diameter = float(A_nozzle_line.group(0)) if A_nozzle_line is not None else 0
+    extrusion_coefficient = float(extrusion_coefficient_line.group(0)) if extrusion_coefficient_line is not None else 0
+
+    print(Z_nozzle_diameter, A_syringe_diameter, Z_nozzle_diameter, A_nozzle_diameter, extrusion_coefficient)
+        
+    #  except:
+    #     print("")
+    # else:
+    #     placeholder = None
+
     gcode = content[6:]
     extruder = 0
     b_extrusion = False
     c_extrusion = False
     # write a new file
-    f_new = open("gcode_modified.txt","w+")
+    f_new = open("gcode_modified.txt","w+t")
     if coordinate_type == 0:
         f_new.write("G90\n")
     else:
