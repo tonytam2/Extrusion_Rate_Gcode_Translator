@@ -9,9 +9,6 @@ def headerFindDigit(line):
     print(line)
     return matchArray
 
-def modeSwitcher():
-    return
-
 def main():
     #open the existing g-code file
     file = open("gcode.txt", "r")
