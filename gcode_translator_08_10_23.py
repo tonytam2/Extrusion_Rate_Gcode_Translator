@@ -173,7 +173,7 @@ def main():
                 write_line += ' Z' + str(z)
             if a is not None:
                 write_line += ' A' + str(a)
-            if e is not None:
+            if e is not None and g != 0:
                 if b_extrusion == True:
                     write_line += ' B' + str(round(e,3))
                 elif c_extrusion == True:
